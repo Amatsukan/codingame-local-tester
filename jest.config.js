@@ -9,11 +9,10 @@ module.exports = {
   coverageProvider: "v8",
 
   // The root directory that Jest should scan for tests and modules within
-  roots: [
-    "<rootDir>"
+  testMatch: [
+    "<rootDir>/test/**/*.js"
   ],
-
-  // The test environment that will be used for testing
+  setupFilesAfterEnv: ["<rootDir>/src/jest/jest-runner-init.js"],
   testEnvironment: "node",
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
