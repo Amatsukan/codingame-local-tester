@@ -18,13 +18,13 @@ You can install the package in two ways:
 ### Globally (Recommended)
 A global installation allows you to run the `codingame-local-tester` command in any folder.
 ```bash
-npm install -g codingame-local-tester
+npm install -g @amatsukan/codingame-local-tester
 ```
 
 ### Locally
 You can also install it as a development dependency in your project.
 ```bash
-npm install --save-dev codingame-local-tester
+npm install --save-dev @amatsukan/codingame-local-tester
 ```
 In this case, you can run the tool via `npx codingame-local-tester` or by adding a script to your `package.json`.
 
