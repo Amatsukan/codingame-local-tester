@@ -1,125 +1,143 @@
-# CodinGame Local Tester
+
+CodinGame Local Tester
+======================
 
 [![NPM Version](https://img.shields.io/npm/v/codingame-local-tester.svg)](https://www.npmjs.com/package/@amatsukan/codingame-local-tester)
 
-A command-line tool to test your CodinGame puzzle solutions locally. `codingame-local-tester` runs your JavaScript code against a set of test cases, simulating the platform's environment and providing instant feedback using Jest.
+Uma ferramenta de linha de comando para testar suas soluções de quebra-cabeças do CodinGame localmente. `codingame-local-tester` executa seu código JavaScript contra um conjunto de casos de teste, simulando o ambiente da plataforma e fornecendo feedback instantâneo.
 
-## Features
+Recursos
+--------
 
-- **Test Locally**: Develop and test your solutions without needing to submit them to the CodinGame platform with every change.
-- **Automated I/O Testing**: Defines test cases as simple JavaScript modules. The tool handles injecting input (`readline`) and capturing output (`console.log`).
-- **Simple Configuration**: A single configuration file to point to your solution and your tests.
-- **Fast Feedback**: Get clear pass/fail results from Jest for each test case.
+* **Teste Localmente**: Desenvolva e teste suas soluções sem precisar enviá-las para a plataforma CodinGame a cada alteração.
+* **Execução Isolada**: Cada caso de teste executa sua solução em um processo separado e isolado, evitando efeitos colaterais entre os testes.
+* **E/S Automatizada**: A ferramenta lida automaticamente com a injeção de `input` através de um `readline()` mockado e captura a saída do `console.log()` para verificação.
+* **Configuração Simples**: Um único arquivo de configuração para apontar para sua solução e seus testes.
+* **Feedback Rápido**: Obtenha resultados claros de aprovação/reprovação para cada caso de teste diretamente no seu terminal.
 
-## Installation
+Instalação
+----------
 
-You can install the package in two ways:
+Você pode instalar o pacote de duas maneiras:
 
-### Globally (Recommended)
-A global installation allows you to run the `codingame-local-tester` command in any folder.
-```bash
+### Globalmente (Recomendado)
+
+Uma instalação global permite que você execute o comando `codingame-local-tester` em qualquer pasta.
+
+```
 npm install -g @amatsukan/codingame-local-tester
 ```
 
-### Locally
-You can also install it as a development dependency in your project.
-```bash
+### Localmente
+
+Você também pode instalá-lo como uma dependência de desenvolvimento em seu projeto.
+
+```
 npm install --save-dev @amatsukan/codingame-local-tester
 ```
-In this case, you can run the tool via `npx codingame-local-tester` or by adding a script to your `package.json`.
 
-## How to Use
+Nesse caso, você pode executar a ferramenta via `npx codingame-local-tester` ou adicionando um script ao seu `package.json`.
 
-The tool runs your solution script against multiple test case files. For each case, it will provide the input specified via readline() and compare your script's output (via console.log()) with the corresponding expectedOutput.
+Como Usar
+---------
 
-### 1. Structure Your Project
+A ferramenta executa seu script de solução contra múltiplos arquivos de casos de teste. Para cada caso, ela fornecerá a entrada especificada via `readline()` e comparará a saída do seu script (via `console.log()`) com a `expectedOutput` correspondente.
 
-Create a folder for your puzzle with the following structure:
+### 1. Estruture Seu Projeto
+
+Crie uma pasta para o seu quebra-cabeça com a seguinte estrutura:
 
 ```
 my-puzzle/
 ├── solution.js
 ├── test-cases/
-│ ├── 1.js
-│ └── 2.js
+│   ├── 1.js
+│   └── 2.js
 └── codingame-workspace.config.js
 ```
 
-### 2. Write Your Solution (solution.js)
+### 2. Escreva Sua Solução (solution.js)
 
-Write your code as you would on the CodinGame platform, using readline() to read the input and console.log() to print the output.
+Escreva seu código como faria na plataforma CodinGame, usando `readline()` para ler a entrada e `console.log()` para imprimir a saída.
 
-**Example: `solution.js`**
-```javascript
-// This code reads two lines of input,
-// adds the numbers, and prints the result.
+**Exemplo: `solution.js`**
+
+```
+// Este código lê duas linhas de entrada,
+// soma os números e imprime o resultado.
 const n1 = parseInt(readline());
 const n2 = parseInt(readline());
 
 console.log(n1 + n2);
 ```
 
-### 3. Create the Test Cases
+### 3. Crie os Casos de Teste
 
-Inside the test cases folder, create `.js` files. Each file represents a test case and **must export an object** containing the `input` and `expectedOutput` properties.
+Dentro da pasta de casos de teste, crie arquivos `.js`. Cada arquivo representa um caso de teste e **deve exportar um objeto** contendo as propriedades `input` e `expectedOutput`.
 
-**Example: `test-cases/1.js`**
-```javascript
+**Exemplo: `test-cases/1.js`**
+
+```
 const input = `10\n5`;
 const expectedOutput = `15`;
 
 module.exports = { input, expectedOutput };
 ```
-> **Note**: Both `input` and `expectedOutput` must be strings. For multiple lines, use the newline character (`\n`).
 
-### 4. Create the Configuration File
+> **Nota**: Tanto `input` quanto `expectedOutput` devem ser strings. Para múltiplas linhas, use o caractere de nova linha (`\n`).
 
-In the root of your project, create the file `codingame-workspace.config.js`. This file tells the tool where to find your solution and test cases.
+### 4. Crie o Arquivo de Configuração
 
-**Example: `codingame-workspace.config.js`**
-```javascript
+Na raiz do seu projeto, crie o arquivo `codingame-workspace.config.js`. Este arquivo informa à ferramenta onde encontrar sua solução e os casos de teste.
+
+**Exemplo: `codingame-workspace.config.js`**
+
+```
 module.exports = {
-// Path to your main solution file
-solution_main_file: 'solution.js',
+  // Caminho para o seu arquivo de solução principal
+  solution_main_file: 'solution.js',
 
-// Path to the folder containing the test case files
-cases_folder: 'test-cases'
+  // Caminho para a pasta contendo os arquivos de caso de teste
+  cases_folder: 'test-cases'
 };
 ```
 
-### 5. Run the Tests
+### 5. Execute os Testes
 
-Open the terminal in the root folder of your project (`my-puzzle/`) and run the command:
+Abra o terminal na pasta raiz do seu projeto (`my-puzzle/`) e execute o comando:
 
+Se instalado globalmente:
 
-If globally installed:
-```bash
+```
 codingame-local-tester
 ```
 
-If dev dependency installed:
-```bash
+Se instalado como dependência de desenvolvimento:
+
+```
 npx codingame-local-tester
 ```
 
-The tool will launch Jest, which will run each test case and display the results.
+A ferramenta executará sua solução para cada caso de teste e exibirá os resultados diretamente no terminal.
 
-## Programmatic API
+API Programática
+----------------
 
-Besides the CLI, you can use `codingame-local-tester` programmatically.
+Além da CLI, você pode usar o `codingame-local-tester` programaticamente.
 
-```javascript
+```
 const tester = require('codingame-local-tester');
 
-// The run function encapsulates the CLI's main logic.
-// It automatically finds and uses 'codingame-workspace.config.js'.
+// A função 'run' encapsula a lógica principal da CLI.
+// Ela encontra e usa automaticamente o 'codingame-workspace.config.js'.
 try {
-  tester.run();
+  await tester.run();
 } catch (error) {
-  console.error('An error occurred:', error.message);
+  console.error('Ocorreu um erro:', error.message);
 }
 ```
 
-## License
+Licença
+-------
 
-This project is licensed under the ISC License.
+Este projeto está licenciado sob a Licença ISC.

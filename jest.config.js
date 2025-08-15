@@ -12,7 +12,6 @@ module.exports = {
   testMatch: [
     "<rootDir>/test/**/*.js"
   ],
-  setupFilesAfterEnv: ["<rootDir>/src/jest/jest-runner-init.js"],
   testEnvironment: "node",
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected

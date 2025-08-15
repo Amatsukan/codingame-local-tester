@@ -9,9 +9,9 @@ const { handleError } = require('../src/error-handler');
 /**
  * Main function to run the CodinGame Local Tester.
  */
-function main() {
+async function main() {
     try {
-        run();
+        await run();
     } catch (error) {
         handleError(error);
     }

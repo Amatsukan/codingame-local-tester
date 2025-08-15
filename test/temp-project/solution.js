@@ -1,0 +1,1 @@
+const n = readline(); console.log(parseInt(n) * 2);

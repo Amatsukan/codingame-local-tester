@@ -1,0 +1,1 @@
+module.exports = { input: '10', expectedOutput: '20' };

@@ -1,59 +1,58 @@
-const MockEnvironment = require('./mock-environment');
+const { fork } = require('child_process');
+const path = require('path');
+
+// This script will be injected into the child process to create the `readline` mock.
+const readlineSetupPath = path.resolve(__dirname, 'readline-setup.js');
 
 /**
- * Orchestrates the execution of a single test case.
+ * Runs a single test case in an isolated child process.
+ * @param {string} solutionPath - The absolute path to the user's solution file.
+ * @param {object} testCase - An object containing `input` and `expectedOutput`.
+ * @returns {Promise<{success: boolean, actual: string, expected: string, error?: Error}>}
  */
-class TestCaseRunner {
-    /**
-     * @param {string} solutionPath The absolute path to the user's solution file.
-     * @param {object} testCase An object containing `input` and `expectedOutput`.
-     * @param {string} testName The name of the test, derived from the test case filename.
-     */
-    constructor(solutionPath, testCase, testName) {
-        this.solutionPath = solutionPath;
-        this.testCase = testCase;
-        this.testName = testName;
-    }
+function runTestCase(solutionPath, testCase) {
+    return new Promise((resolve) => {
+        const child = fork(solutionPath, [], {
+            // Run in a silent mode to capture stdout.
+            // 'ipc' is needed for communication if we ever want to send messages.
+            stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+            // Pre-load our readline mock script.
+            execArgv: ['-r', readlineSetupPath]
+        });
 
-    /**
-     * Runs a single test case by defining it within Jest.
-     */
-    run() {
-        test(`should correctly solve the case: "${this.testName}"`, this.executeTest.bind(this));
-    }
+        let stdout = '';
+        let stderr = '';
 
-    /**
-     * Executes the logic for a single test.
-     * It sets up a mock environment, runs the solution code,
-     * verifies the output, and cleans up the environment.
-     */
-    executeTest() {
-        const mockEnv = new MockEnvironment(this.testCase.input);
-        let capturedOutput;
+        child.stdout.on('data', (data) => {
+            stdout += data.toString();
+        });
 
-        try {
-            mockEnv.mockReadline();
-            capturedOutput = mockEnv.mockConsoleLog();
+        child.stderr.on('data', (data) => {
+            stderr += data.toString();
+        });
 
-            // Execute the solution in an isolated module environment
-            jest.isolateModules(() => {
-                require(this.solutionPath);
-            });
-            this.verifyOutput(capturedOutput);
-        } finally {
-            mockEnv.restoreConsoleLog();
-        }
-    }
+        child.on('close', (code) => {
+            if (code !== 0) {
+                // If the process exited with an error code, treat it as a failure.
+                const error = new Error(`Process exited with code ${code}\n${stderr}`);
+                return resolve({ success: false, actual: stdout.trim(), expected: (testCase.expectedOutput || '').trim(), error });
+            }
 
-    /**
-     * Verifies the captured output against the expected output.
-     * @param {string[]} capturedOutput - The output captured from console.log.
-     */
-    verifyOutput(capturedOutput) {
-        const expected = (this.testCase.expectedOutput || '').trim();
-        const expectedLines = expected ? expected.split('\n') : [];
-        expect(capturedOutput).toEqual(expectedLines);
-    }
+            const actual = stdout.trim();
+            const expected = (testCase.expectedOutput || '').trim();
+            const success = actual === expected;
+            resolve({ success, actual, expected });
+        });
+
+        child.on('error', (err) => {
+            // This catches errors in spawning the process itself.
+            resolve({ success: false, actual: '', expected: testCase.expectedOutput, error: err });
+        });
+
+        // Send the test case input to the child process's stdin.
+        child.stdin.write(testCase.input || '');
+        child.stdin.end();
+    });
 }
 
-module.exports = TestCaseRunner;
+module.exports = { runTestCase };

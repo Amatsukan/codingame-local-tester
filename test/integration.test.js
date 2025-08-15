@@ -38,13 +38,11 @@ describe('CLI Integration Tests', () => {
         });
 
         // Execute: If it throws, the test will fail automatically.
-        const output = execSync(`node "${cliPath}"`, { cwd: tempDir, encoding: 'utf8' });
+        const output = execSync(`node "${cliPath}"`, { cwd: tempDir, encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } });
 
         // Assert
-        expect(output).toContain('PASS');
-        expect(output).toContain('should correctly solve the case: "1"');
-        expect(output).toContain('Test Suites: 1 passed, 1 total');
-        expect(output).toContain('Tests:       1 passed, 1 total');
+        expect(output).toContain('✓ PASS 1');
+        expect(output).toContain('Tests: 1 passed, 1 total.');
     });
 
     it('should fail the test case and exit with a non-zero code when solution is incorrect', () => {
@@ -57,17 +55,15 @@ describe('CLI Integration Tests', () => {
 
         // Execute and Assert
         try {
-            execSync(`node "${cliPath}"`, { cwd: tempDir, encoding: 'utf8' });
+            execSync(`node "${cliPath}"`, { cwd: tempDir, encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } });
             fail('CLI command should have failed but it succeeded.');
         } catch (error) {
             const output = error.stdout + error.stderr;
             expect(error.status).not.toBe(0);
-            expect(output).toContain('FAIL');
-            expect(output).toContain('should correctly solve the case: "1"');
+            expect(output).toContain('  ✗ FAIL 1');
             expect(output).toContain('Expected: "20"');
             expect(output).toContain('Received: "30"');
-            expect(output).toContain('Test Suites: 1 failed, 1 total');
-            expect(output).toContain('Tests:       1 failed, 1 total');
+            expect(output).toContain('Tests: 0 passed, 1 failed, 1 total.');
         }
     });
 
@@ -80,7 +76,7 @@ describe('CLI Integration Tests', () => {
 
         // Execute and Assert
         try {
-            execSync(`node "${cliPath}"`, { cwd: tempDir, encoding: 'utf8' });
+            execSync(`node "${cliPath}"`, { cwd: tempDir, encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } });
             fail('CLI command should have failed but it succeeded.');
         } catch (error) {
             const output = error.stderr;

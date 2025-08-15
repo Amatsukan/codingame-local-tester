@@ -1,82 +1,120 @@
-const TestCaseRunner = require('../src/test-case-runner');
+const { runTestCase } = require('../src/test-case-runner');
 const path = require('path');
+const { fork } = require('child_process');
+const { EventEmitter } = require('events');
 
-// Mock Jest's `test` function so we can check if it's called.
-global.test = jest.fn((name, fn) => fn());
-
-// Mock the user's solution to control its behavior.
-const mockSolutionLogic = jest.fn();
-// The path for jest.mock must be a string literal because it's hoisted above
-// the variable declarations.
-jest.mock('../fake-solution.js', () => mockSolutionLogic(), { virtual: true });
-const mockSolutionPath = path.resolve(__dirname, '../fake-solution.js');
+// Mock the child_process.fork
+jest.mock('child_process');
 
 describe('TestCaseRunner', () => {
-    let consoleSpy;
+    let mockChildProcess;
 
     beforeEach(() => {
-        // Clear all mocks before each test.
         jest.clearAllMocks();
-        // Ensure the global environment is clean.
-        delete global.readline;
-        // Spy on console.log to verify restoration.
-        consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        // Setup a mock child process that we can control
+        mockChildProcess = new EventEmitter();
+        mockChildProcess.stdout = new EventEmitter();
+        mockChildProcess.stderr = new EventEmitter();
+        mockChildProcess.stdin = {
+            write: jest.fn(),
+            end: jest.fn(),
+        };
+
+        fork.mockReturnValue(mockChildProcess);
     });
 
-    afterEach(() => {
-        consoleSpy.mockRestore();
-    });
+    it('should resolve with success when output matches', async () => {
+        const solutionPath = '/path/to/solution.js';
+        const testCase = { input: '10', expectedOutput: '20' };
 
-    it('should execute a test case and verify the output', () => {
-        const testCase = { input: 'line1', expectedOutput: 'output1' };
-        const runner = new TestCaseRunner(mockSolutionPath, testCase, 'happy-path');
+        const promise = runTestCase(solutionPath, testCase);
 
-        mockSolutionLogic.mockImplementation(() => {
-            console.log('output1');
+        // Simulate child process behavior
+        mockChildProcess.stdout.emit('data', '20');
+        mockChildProcess.emit('close', 0);
+
+        const result = await promise;
+
+        expect(fork).toHaveBeenCalledWith(solutionPath, [], expect.any(Object));
+        expect(mockChildProcess.stdin.write).toHaveBeenCalledWith('10');
+        expect(result).toEqual({
+            success: true,
+            actual: '20',
+            expected: '20',
         });
-
-        runner.executeTest();
-
-        // Verify that the captured output matches the expected output.
-        expect(runner.verifyOutput(['output1'])).toBeUndefined();
     });
 
-    it('should correctly handle empty and undefined expected output', () => {
-        const testCase = { input: 'a', expectedOutput: '' };
-        const runner = new TestCaseRunner(mockSolutionPath, testCase, 'empty-output');
-        mockSolutionLogic.mockImplementation(() => {}); // Solution prints nothing.
+    it('should resolve with failure when output does not match', async () => {
+        const solutionPath = '/path/to/solution.js';
+        const testCase = { input: '10', expectedOutput: '20' };
 
-        // Check for empty string.
-        runner.executeTest();
-        expect(runner.verifyOutput([])).toBeUndefined();
+        const promise = runTestCase(solutionPath, testCase);
 
-        // Check for undefined.
-        runner.testCase.expectedOutput = undefined;
-        runner.executeTest();
-        expect(runner.verifyOutput([])).toBeUndefined();
-    });
+        // Simulate child process behavior
+        mockChildProcess.stdout.emit('data', '30');
+        mockChildProcess.emit('close', 0);
 
-    it('should call the Jest `test` function when run() is invoked', () => {
-        const testCase = { input: '', expectedOutput: '' };
-        const runner = new TestCaseRunner(mockSolutionPath, testCase, 'test-name');
+        const result = await promise;
 
-        runner.run();
-
-        expect(global.test).toHaveBeenCalledWith(
-            'should correctly solve the case: "test-name"',
-            expect.any(Function)
-        );
-    });
-
-    it('should restore console.log even if the solution throws an error', () => {
-        const testCase = { input: 'a', expectedOutput: 'b' };
-        const runner = new TestCaseRunner(mockSolutionPath, testCase, 'error-path');
-        mockSolutionLogic.mockImplementation(() => {
-            throw new Error('Solution Error');
+        expect(result).toEqual({
+            success: false,
+            actual: '30',
+            expected: '20',
         });
+    });
 
-        expect(() => runner.executeTest()).toThrow('Solution Error');
-        // The console.log spy should have been restored in the 'finally' block.
-        expect(consoleSpy.mock.calls.length).toBe(0); // The original mock was restored.
+    it('should handle multi-line output correctly', async () => {
+        const solutionPath = '/path/to/solution.js';
+        const testCase = { input: 'a\nb', expectedOutput: 'line1\nline2' };
+
+        const promise = runTestCase(solutionPath, testCase);
+
+        // Simulate child process behavior
+        mockChildProcess.stdout.emit('data', 'line1\n');
+        mockChildProcess.stdout.emit('data', 'line2');
+        mockChildProcess.emit('close', 0);
+
+        const result = await promise;
+
+        expect(result).toEqual({
+            success: true,
+            actual: 'line1\nline2',
+            expected: 'line1\nline2',
+        });
+    });
+
+    it('should resolve with failure on process error', async () => {
+        const solutionPath = '/path/to/solution.js';
+        const testCase = { input: '10', expectedOutput: '20' };
+        const error = new Error('Spawn error');
+
+        const promise = runTestCase(solutionPath, testCase);
+
+        // Simulate child process error
+        mockChildProcess.emit('error', error);
+
+        const result = await promise;
+
+        expect(result.success).toBe(false);
+        expect(result.error).toBe(error);
+    });
+
+    it('should resolve with failure when process exits with non-zero code', async () => {
+        const solutionPath = '/path/to/solution.js';
+        const testCase = { input: '10', expectedOutput: '20' };
+
+        const promise = runTestCase(solutionPath, testCase);
+
+        // Simulate child process behavior
+        mockChildProcess.stderr.emit('data', 'Something went wrong');
+        mockChildProcess.emit('close', 1);
+
+        const result = await promise;
+
+        expect(result.success).toBe(false);
+        expect(result.error).toBeInstanceOf(Error);
+        expect(result.error.message).toContain('Process exited with code 1');
+        expect(result.error.message).toContain('Something went wrong');
     });
 });
