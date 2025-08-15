@@ -1,6 +1,6 @@
 {
     "name": "@amatsukan/codingame-local-tester",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "A local testing framework for CodinGame JavaScript solutions.",
     "main": "src/index.js",
     "bin": {
@@ -12,7 +12,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/YOUR_USERNAME/codingame-local-tester.git"
+        "url": "git+https://github.com/Amatsukan/codingame-local-tester.git"
     },
     "scripts": {
         "test": "jest",
@@ -28,9 +28,9 @@
     "author": "Amatsukan",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/YOUR_USERNAME/codingame-local-tester/issues"
+        "url": "https://github.com/Amatsukan/codingame-local-tester/issues"
     },
-    "homepage": "https://github.com/YOUR_USERNAME/codingame-local-tester#readme",
+    "homepage": "https://github.com/Amatsukan/codingame-local-tester#readme",
     "dependencies": {
         "jest": "^29.7.0"
     },
