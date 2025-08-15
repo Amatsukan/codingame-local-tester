@@ -4,7 +4,7 @@
 
 A command-line tool to test your CodinGame puzzle solutions locally. `codingame-local-tester` runs your JavaScript code against a set of test cases, simulating the platform's environment and providing instant feedback using Jest.
 
-##Features
+## Features
 
 - **Test Locally**: Develop and test your solutions without needing to submit them to the CodinGame platform with every change.
 - **Automated I/O Testing**: Defines test cases as simple JavaScript modules. The tool handles injecting input (`readline`) and capturing output (`console.log`).
@@ -103,6 +103,22 @@ npx codingame-local-tester
 ```
 
 The tool will launch Jest, which will run each test case and display the results.
+
+## Programmatic API
+
+Besides the CLI, you can use `codingame-local-tester` programmatically.
+
+```javascript
+const tester = require('codingame-local-tester');
+
+// The run function encapsulates the CLI's main logic.
+// It automatically finds and uses 'codingame-workspace.config.js'.
+try {
+  tester.run();
+} catch (error) {
+  console.error('An error occurred:', error.message);
+}
+```
 
 ## License
 
