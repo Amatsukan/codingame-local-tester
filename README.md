@@ -1,7 +1,7 @@
 # CodinGame Local Tester
 
 [![NPM Version](https://img.shields.io/npm/v/codingame-local-tester.svg)](https://www.npmjs.com/package/codingame-local-tester)
-
+[![Node.js Package](https://github.com/Amatsukan/codingame-local-tester/actions/workflows/npm-publish.yml/badge.svg?branch=main)](https://github.com/Amatsukan/codingame-local-tester/actions/workflows/npm-publish.yml)
 A command-line tool to test your CodinGame puzzle solutions locally. `codingame-local-tester` runs your JavaScript code against a set of test cases, simulating the platform's environment and providing instant feedback using Jest.
 
 ## Features
