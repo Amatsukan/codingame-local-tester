@@ -8,6 +8,7 @@ const ConfigError = require('./ConfigError');
 class ConfigLoader {
     constructor(fileName) {
         this.fileName = fileName;
+        this.configPath = null;
     }
 
     /**
@@ -16,12 +17,13 @@ class ConfigLoader {
      * @throws {ConfigError} If the configuration file is not found.
      */
     load() {
-        const configPath = path.join(process.cwd(), this.fileName);
-        if (!fs.existsSync(configPath)) {
+        this.configPath = path.join(process.cwd(), this.fileName);
+        if (!fs.existsSync(this.configPath)) {
             throw new ConfigError(`Configuration file not found! Please create a "${this.fileName}" in the root of your project.`);
         }
-        return require(configPath);
+        return require(this.configPath);
     }
 }
 
 module.exports = ConfigLoader;
+
