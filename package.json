@@ -1,5 +1,5 @@
 {
-    "name": "codingame-local-tester",
+    "name": "@amatsukan/codingame-local-tester",
     "version": "1.0.0",
     "description": "A local testing framework for CodinGame JavaScript solutions.",
     "main": "src/index.js",
@@ -11,12 +11,13 @@
         "src"
     ],
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/YOUR_USERNAME/codingame-local-tester.git"
+        "type": "git",
+        "url": "git+https://github.com/YOUR_USERNAME/codingame-local-tester.git"
     },
     "scripts": {
         "test": "jest",
-        "test:ci": "jest --coverage"
+        "test:ci": "jest --coverage",
+        "publish:local": "dotenv npm publish --access public"
     },
     "keywords": [
         "codingame",
@@ -24,13 +25,19 @@
         "testing",
         "simulation"
     ],
-    "author": "Your Name <you@example.com> (https://your-website.com)",
+    "author": "Amatsukan",
     "license": "ISC",
     "bugs": {
-      "url": "https://github.com/YOUR_USERNAME/codingame-local-tester/issues"
+        "url": "https://github.com/YOUR_USERNAME/codingame-local-tester/issues"
     },
     "homepage": "https://github.com/YOUR_USERNAME/codingame-local-tester#readme",
     "dependencies": {
         "jest": "^29.7.0"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^10.0.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

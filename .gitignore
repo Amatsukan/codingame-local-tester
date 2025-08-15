@@ -1,21 +1,8 @@
 # Dependencies
 /node_modules
 
-# Testing
+# Test Artifacts
 /coverage
 
-# Production
-/build
-
-# Misc
-.DS_Store
-*.pem
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment Variables
+# Local Environment Configuration
 .env
-.env.test
