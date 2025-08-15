@@ -2,7 +2,7 @@
     "name": "codingame-local-tester",
     "version": "1.0.0",
     "description": "A local testing framework for CodinGame JavaScript solutions.",
-    "main": "src/runner.js",
+    "main": "src/index.js",
     "bin": {
         "codingame-local-tester": "bin/cli.js"
     },
@@ -10,6 +10,10 @@
         "bin",
         "src"
     ],
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/YOUR_USERNAME/codingame-local-tester.git"
+    },
     "scripts": {
         "test": "jest",
         "test:ci": "jest --coverage"
@@ -20,8 +24,12 @@
         "testing",
         "simulation"
     ],
-    "author": "",
+    "author": "Your Name <you@example.com> (https://your-website.com)",
     "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/YOUR_USERNAME/codingame-local-tester/issues"
+    },
+    "homepage": "https://github.com/YOUR_USERNAME/codingame-local-tester#readme",
     "dependencies": {
         "jest": "^29.7.0"
     }

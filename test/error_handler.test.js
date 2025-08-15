@@ -1,19 +1,12 @@
-const { handleError } = require('../src/errorHandler');
-
-// Custom error class to simulate the CLI scenario.
-class ConfigError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'ConfigError';
-    }
-}
+const { handleError } = require('../src/error-handler');
+const ConfigError = require('../src/config/ConfigError');
 
 describe('handleError', () => {
     let consoleErrorSpy;
     let processExitSpy;
 
     beforeEach(() => {
-        // Mock to prevent tests from halting execution and polluting the console.
+        // Mock to prevent tests from halting execution and polluting the console
         consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
         processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
     });
@@ -37,7 +30,7 @@ describe('handleError', () => {
     });
 
     it('should handle generic Error without a message', () => {
-        const error = new Error(); // Error without a message.
+        const error = new Error(); // Error without a message
         handleError(error);
         expect(consoleErrorSpy).toHaveBeenCalledWith('Error: An unexpected error occurred!');
         expect(processExitSpy).toHaveBeenCalledWith(1);
