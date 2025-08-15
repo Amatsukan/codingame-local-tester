@@ -1,0 +1,28 @@
+{
+    "name": "codingame-local-tester",
+    "version": "1.0.0",
+    "description": "A local testing framework for CodinGame JavaScript solutions.",
+    "main": "src/runner.js",
+    "bin": {
+        "codingame-local-tester": "bin/cli.js"
+    },
+    "files": [
+        "bin",
+        "src"
+    ],
+    "scripts": {
+        "test": "jest",
+        "test:ci": "jest --coverage"
+    },
+    "keywords": [
+        "codingame",
+        "jest",
+        "testing",
+        "simulation"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "jest": "^29.7.0"
+    }
+}
