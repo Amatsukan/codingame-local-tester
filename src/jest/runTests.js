@@ -5,7 +5,7 @@ const path = require('path');
  * Executes Jest tests.
  */
 function runTests() {
-    const jestTestRunnerFile = path.resolve(__dirname, '../src/runner.js');
+    const jestTestRunnerFile = path.resolve(__dirname, '../runner.js');
 
     const jestArgs = [
         jestTestRunnerFile,

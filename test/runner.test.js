@@ -89,7 +89,6 @@ describe('Test Runner', () => {
             bootstrap();
 
             expect(describeFn).toHaveBeenCalledWith('CodinGame Solution Tests', expect.any(Function));
-            expect(testFn).toHaveBeenCalledWith('test1', expect.any(Function));
             expect(TestCaseRunner).toHaveBeenCalledWith(solutionPath, mockTestCase, 'test1');
             expect(TestCaseRunner.mock.instances[0].run).toHaveBeenCalledTimes(1);
 

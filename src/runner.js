@@ -40,11 +40,9 @@ function bootstrap() {
     const testCases = getTestCases();
 
     describe('CodinGame Solution Tests', () => {
-        testCases.forEach(({ solutionPath, testCase, testName }) => {
-            test(testName, () => {
-                const runner = new TestCaseRunner(solutionPath, testCase, testName);
-                runner.run();
-            });
+        testCases.forEach(({ solutionPath, testCase, testName }) => { 
+            const runner = new TestCaseRunner(solutionPath, testCase, testName);
+            runner.run();
         });
     });
 }
