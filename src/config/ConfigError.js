@@ -1,6 +1,3 @@
-/**
- * Represents a configuration error.
- */
 class ConfigError extends Error {
     constructor(message) {
         super(message);

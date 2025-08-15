@@ -12,7 +12,7 @@ const mockRunTests = jest.fn();
 jest.mock('../src/jest/runTests', () => ({ runTests: mockRunTests }));
 
 const mockHandleError = jest.fn();
-jest.mock('../src/error_handler', () => ({ handleError: mockHandleError }));
+jest.mock('../src/error-handler', () => ({ handleError: mockHandleError }));
 
 describe('CLI main execution', () => {
     beforeEach(() => {

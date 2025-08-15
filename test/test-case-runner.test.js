@@ -5,9 +5,11 @@ const path = require('path');
 global.test = jest.fn((name, fn) => fn());
 
 // Mock the user's solution to control its behavior.
-const mockSolutionPath = path.resolve('./fake-solution.js');
 const mockSolutionLogic = jest.fn();
-jest.mock(mockSolutionPath, () => mockSolutionLogic(), { virtual: true });
+// The path for jest.mock must be a string literal because it's hoisted above
+// the variable declarations.
+jest.mock('../fake-solution.js', () => mockSolutionLogic(), { virtual: true });
+const mockSolutionPath = path.resolve(__dirname, '../fake-solution.js');
 
 describe('TestCaseRunner', () => {
     let consoleSpy;
