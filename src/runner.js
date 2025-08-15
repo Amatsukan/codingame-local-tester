@@ -1,8 +1,17 @@
+/**
+ * @file This script is the main test runner for Jest. It discovers test cases,
+ * sets up the environment, and executes the tests.
+ */
+
 const fs = require('fs');
 const path = require('path');
 const TestCaseRunner = require('./test-case-runner');
 
-// Helper function to load and run test cases
+/**
+ * Loads all test case files from a directory and initiates a runner for each.
+ * @param {string} casesDirectory The absolute path to the directory containing test case files.
+ * @param {string} solutionPath The absolute path to the user's solution file.
+ */
 function loadAndRunTestCases(casesDirectory, solutionPath) {
     const caseFiles = fs.readdirSync(casesDirectory).filter(file => file.endsWith('.js'));
 
@@ -13,8 +22,7 @@ function loadAndRunTestCases(casesDirectory, solutionPath) {
     });
 }
 
-// Main Test Suite for CodinGame Solutions
-describe('CodinGame Solution Test Runner', () => {
+describe('CodinGame Solution Test Suite', () => {
     const casesDirectory = process.env.CASES_FOLDER;
     const solutionPath = process.env.SOLUTION_MAIN_FILE;
 

@@ -4,6 +4,11 @@ const MockEnvironment = require('./mock-environment');
  * Orchestrates the execution of a single test case.
  */
 class TestCaseRunner {
+    /**
+     * @param {string} solutionPath The absolute path to the user's solution file.
+     * @param {object} testCase An object containing `input` and `expectedOutput`.
+     * @param {string} testName The name of the test, derived from the test case filename.
+     */
     constructor(solutionPath, testCase, testName) {
         this.solutionPath = solutionPath;
         this.testCase = testCase;

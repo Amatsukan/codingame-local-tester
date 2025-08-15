@@ -2,6 +2,9 @@
  * Manages the mocking of global functions like `readline` and `console.log`.
  */
 class MockEnvironment {
+    /**
+     * @param {string} [testCaseInput=''] The input string for the test case.
+     */
     constructor(testCaseInput) {
         this.testCaseInput = testCaseInput || '';
         this.consoleSpy = null;
@@ -23,7 +26,7 @@ class MockEnvironment {
      */
     mockConsoleLog() {
         this.consoleSpy = jest.spyOn(console, 'log').mockImplementation(output => {
-            this.capturedOutput.push(String(output)); // Ensure output is a string
+            this.capturedOutput.push(String(output));
         });
         return this.capturedOutput;
     }

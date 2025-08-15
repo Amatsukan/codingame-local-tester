@@ -1,12 +1,13 @@
 /**
  * Handles errors that occur during the execution of the CLI.
- * @param {Error} error - The error object.
+ * It logs a formatted message to stderr and exits the process.
+ * @param {Error} error The error object. Can be a standard Error or a custom ConfigError.
  */
 function handleError(error) {
     if (error instanceof ConfigError) {
         console.error(`Error: ${error.message}`);
     } else {
-        // Generic error handling for other unexpected errors
+        // Generic error handling for other unexpected errors.
         console.error(`Error: ${error.message || 'An unexpected error occurred!'}`);
     }
     process.exit(1);
